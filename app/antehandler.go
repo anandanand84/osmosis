@@ -19,9 +19,11 @@ func NewDvNotifyDecorator(url string) DvNotifyDecorator {
 
 func (dvDec DvNotifyDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
 	log.Println("Informing dv endpoint of mempool transaction")
-	_, err := http.Get(dvDec.url)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	go func() {
+		_, err := http.Get(dvDec.url)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}()
 	return next(ctx, tx, simulate)
 }
